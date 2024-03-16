@@ -117,7 +117,7 @@ a:visited {
 
 .btn--close{
   font-family: inherit;
-  color: #00c46a;
+  color: red;
   position: absolute;
   top: 0.5rem;
   right: 1.6rem;
@@ -125,6 +125,9 @@ a:visited {
   cursor: pointer;
   border: none;
   background: none;
+}
+.btn--close:hover{
+  text-shadow: red 0px 0px 7px;
 }
 
 .form {
@@ -188,7 +191,16 @@ a:visited {
   border-radius: 100rem;
   width: 10rem;
   height: 2.5rem;
-  background-image: linear-gradient(to right bottom, #f29e9e, #f40808);;
+  background-image: linear-gradient(to right bottom, #f29e9e, #f40808);
+  border: #f40808;
+}
+.btn--delete:hover{
+  transform: translate(0, -6px);
+  box-shadow: #f40808 0px 0px 8px;
+}
+.btn--delete:focus{
+  transform: translate(0, -2px);
+  box-shadow: #f40808 0px 0px 4px;
 }
 .copyright {
   margin-top: auto;

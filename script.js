@@ -67,7 +67,7 @@ class App {
     constructor() {
         this._getPosition();
         this._getLocalStorage();
-        
+        this._hideDeleteButton();
         //handelers
         form.addEventListener("submit", this._newWorkout.bind(this));
         this._removeWorkout();
@@ -104,7 +104,10 @@ class App {
         })
        
     }
-
+    _hideDeleteButton(){
+        if(this.#workouts.length === 0)btnDeleteWorkouts.classList.add('hidden');  
+        else btnDeleteWorkouts.classList.remove('hidden');  
+    }
     _showForm(mapEv) {
         this.#mapEvent = mapEv; 
         form.classList.remove("hidden");
@@ -180,7 +183,7 @@ class App {
         location.reload();
     }
     _renderWorkoutMarker(workout, vis=true){
-        L.marker(workout.coords).addTo(this.#map).setOpacity(vis?1:0)
+        L.marker(workout.coords).addTo(this.#map).setOpacity(vis ?  1 : 0)
         .bindPopup(
             L.popup({
                 maxWidth: "250",
@@ -254,9 +257,10 @@ class App {
             const index =  this.#workouts.indexOf(workout);
             workoutEl.style.opacity = 0;        
             workoutEl.remove();   
+            this._renderWorkoutMarker(workout,false);
             this.#workouts.splice(index, 1)
             this._setLocalStorage();
-            this._renderWorkoutMarker(workout, false)
+            location.reload();
     
         })
         
