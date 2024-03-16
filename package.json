@@ -1,0 +1,19 @@
+{
+  "name": "mapty",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Rofaida",
+  "license": "ISC",
+  "dependencies": {
+    "core-js": "^3.36.0",
+    "leaflet": "^1.9.4",
+    "regenerator-runtime": "^0.14.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}
