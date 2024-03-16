@@ -67,12 +67,14 @@ class App {
     constructor() {
         this._getPosition();
         this._getLocalStorage();
-        this._removeWorkout();
+        
         //handelers
         form.addEventListener("submit", this._newWorkout.bind(this));
+        this._removeWorkout();
         inputType.addEventListener("change", this._toggleElevationField.bind(this));
         containerWorkouts.addEventListener("click", this._moveToPopup.bind(this));
         btnDeleteWorkouts.addEventListener("click", this._clearLocalStorage.bind(this));
+       
     }
 
     _getPosition() {
@@ -152,6 +154,7 @@ class App {
         this._renderWorkout(workout);
         this._hideForm();
         this._setLocalStorage();
+        this._removeWorkout();
         
         
     }
@@ -176,8 +179,8 @@ class App {
         this.#workouts = [];
         location.reload();
     }
-    _renderWorkoutMarker(workout){
-        L.marker(workout.coords).addTo(this.#map)
+    _renderWorkoutMarker(workout, vis=true){
+        L.marker(workout.coords).addTo(this.#map).setOpacity(vis?1:0)
         .bindPopup(
             L.popup({
                 maxWidth: "250",
@@ -243,15 +246,18 @@ class App {
     }
     _removeWorkout() {
         const btnClose =  document.querySelector('.btn--close');
+        if(!btnClose)return;
         btnClose.addEventListener('click', (e)=>{
             const workoutEl = e.target.closest('.workout');
             if(!workoutEl)return;
             const workout = this.#workouts.find(workout => workout.id === workoutEl.dataset.id);
             const index =  this.#workouts.indexOf(workout);
-            workoutEl.style.opacity = 0;           
+            workoutEl.style.opacity = 0;        
+            workoutEl.remove();   
             this.#workouts.splice(index, 1)
             this._setLocalStorage();
-            console.log(this.#workouts);
+            this._renderWorkoutMarker(workout, false)
+    
         })
         
     }
