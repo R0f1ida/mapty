@@ -60,6 +60,7 @@ a:visited {
   height: 77vh;
   overflow-y: scroll;
   overflow-x: hidden;
+  position: relative;
 }
 
 .workouts::-webkit-scrollbar {
@@ -202,6 +203,20 @@ a:visited {
   transform: translate(0, -2px);
   box-shadow: #f40808 0px 0px 4px;
 }
+.btn--sort {
+  margin-left: auto;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #fff;
+  position: absolute;
+  top: 11rem;
+  right: 0;
+}
+
+
 .copyright {
   margin-top: auto;
   font-size: 1.3rem;

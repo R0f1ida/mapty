@@ -105,8 +105,8 @@ class App {
        
     }
     _hideDeleteButton(){
-        if(this.#workouts.length === 0)btnDeleteWorkouts.classList.add('hidden');  
-        else btnDeleteWorkouts.classList.remove('hidden');  
+        if(this.#workouts.length === 0)btnDeleteWorkouts.style.display='none';  
+        else btnDeleteWorkouts.style.display="block";
     }
     _showForm(mapEv) {
         this.#mapEvent = mapEv; 
@@ -158,7 +158,7 @@ class App {
         this._hideForm();
         this._setLocalStorage();
         this._removeWorkout();
-        
+        this._hideDeleteButton();
         
     }
 
