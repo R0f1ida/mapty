@@ -12,7 +12,7 @@ const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const  btnDeleteWorkouts = document.querySelector('.btn--delete');
 const btnSort = document.querySelector('.btn--sort');
-
+const message = document.querySelector('.message');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
@@ -77,6 +77,7 @@ class App {
         containerWorkouts.addEventListener("click", this._moveToPopup.bind(this));
         btnDeleteWorkouts.addEventListener("click", this._clearLocalStorage.bind(this));
         btnSort.addEventListener('click', this._sortWorkouts.bind(this));
+        
        
     }
 
@@ -108,8 +109,15 @@ class App {
        
     }
     _hideDeleteButton(){
-        if(this.#workouts.length === 0)btnDeleteWorkouts.style.display='none';  
-        else btnDeleteWorkouts.style.display="block";
+        if(this.#workouts.length === 0){
+            btnDeleteWorkouts.style.display='none';
+            btnSort.style.display = 'none';
+            message.style.display = 'flex';  
+        }else {
+            btnDeleteWorkouts.style.display="block";
+            btnSort.style.display = 'block';
+            message.style.display = 'none';
+        } 
     }
     _showForm(mapEv) {
         this.#mapEvent = mapEv; 
@@ -249,6 +257,7 @@ class App {
             `
         }
         form.insertAdjacentHTML("afterend", html);
+
     }
     _removeWorkout() {
         const btnClose =  document.querySelector('.btn--close');
@@ -268,10 +277,10 @@ class App {
         })
         
     }
-
+    
     _sortWorkouts(){
-        const sortedWorkouts = this.#workouts.sort((a,b) => a.distance - b.distance > 0);
-        containerWorkouts.style.opacity = 0;
+        const sortedWorkouts = this.#workouts.slice().sort((a,b) => a.distance - b.distance);
+        containerWorkouts.querySelectorAll('.workout').forEach(workoutE => workoutE.remove())
         sortedWorkouts.forEach(workout => this._renderWorkout(workout));
 
         console.log(this.#workouts)

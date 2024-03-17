@@ -39,7 +39,30 @@ a:link,
 a:visited {
   color: var(--color-brand--1);
 }
+.message,
+.error {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 5rem 4rem;
 
+  display: flex;
+
+}
+
+
+.message svg {
+  height: 3rem;
+  width: 3rem;
+  fill: #00c46a;
+  transform: translateY(-0.3rem);
+}
+
+.message p {
+  margin-left: 1.5rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  font-weight: 600;
+} 
 /* SIDEBAR */
 .sidebar {
   flex-basis: 50rem;
