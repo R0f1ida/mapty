@@ -11,6 +11,8 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const  btnDeleteWorkouts = document.querySelector('.btn--delete');
+const btnSort = document.querySelector('.btn--sort');
+
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
@@ -74,6 +76,7 @@ class App {
         inputType.addEventListener("change", this._toggleElevationField.bind(this));
         containerWorkouts.addEventListener("click", this._moveToPopup.bind(this));
         btnDeleteWorkouts.addEventListener("click", this._clearLocalStorage.bind(this));
+        btnSort.addEventListener('click', this._sortWorkouts.bind(this));
        
     }
 
@@ -265,6 +268,16 @@ class App {
         })
         
     }
+
+    _sortWorkouts(){
+        const sortedWorkouts = this.#workouts.sort((a,b) => a.distance - b.distance > 0);
+        containerWorkouts.style.opacity = 0;
+        sortedWorkouts.forEach(workout => this._renderWorkout(workout));
+
+        console.log(this.#workouts)
+         console.log(sortedWorkouts);
+    }
+
     _moveToPopup(e){
         const workoutEL = e.target.closest(".workout");
         console.log(workoutEL);
