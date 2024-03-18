@@ -62,7 +62,26 @@ a:visited {
   font-size: 1.8rem;
   line-height: 1.5;
   font-weight: 600;
-} 
+}
+
+.error svg {
+  height: 3rem;
+  width: 3rem;
+  fill: #f40808;
+  transform: translateY(-0.3rem);
+}
+
+.error p {
+  margin-left: 1.5rem;
+  font-size: 1.8rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.error-number{
+  color: #f40808;
+  font-size: 1.3rem;
+}
 /* SIDEBAR */
 .sidebar {
   flex-basis: 50rem;

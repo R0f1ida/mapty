@@ -84,9 +84,21 @@ class App {
     _getPosition() {
         if(navigator.geolocation){
             navigator.geolocation.getCurrentPosition(
-                this._loadMap.bind(this),
-                function(){
-                    alert("could not get position")
+                this._loadMap.bind(this)
+                ,function(){
+                    const html = `
+                        <div class="error">
+                            <div>
+                            <svg>
+                                <use href="/img/icons.svg#icon-alert-triangle"></use>
+                            </svg>
+                            </div>
+                            <p>Allow access location!</p>
+                        </div> 
+                    `
+                    containerWorkouts.innerHTML = '';
+                    containerWorkouts.insertAdjacentHTML("afterbegin",html);
+
                 })
         }
     }
@@ -106,8 +118,11 @@ class App {
         this.#workouts.forEach(work => {
             this._renderWorkoutMarker(work)
         })
-       
+
     }
+
+
+
     _hideDeleteButton(){
         if(this.#workouts.length === 0){
             btnDeleteWorkouts.style.display='none';
@@ -152,14 +167,17 @@ class App {
         // running or cycling
         if(type === "running"){
             const cadence = +inputCadence.value;
-            if (!validInputs(distance, duration, cadence) || !allPositive(distance, duration, cadence))
-                return alert("inputs must be positive numbers!");
+            if (!validInputs(distance, duration, cadence) || !allPositive(distance, duration, cadence)){
+                return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
+                
+            }
+               
             workout = new Running([lat, lng], distance, duration, cadence);
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
             if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration))
-                return alert("inputs must be positive numbers!");
+            return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
             workout = new Cycling([lat, lng], distance, duration, elevation);
         }
         //new workout
