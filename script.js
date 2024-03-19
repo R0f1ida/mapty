@@ -16,10 +16,12 @@ const message = document.querySelector('.message');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
-    constructor(coords, distance, duration){
+    constructor(coords, distance, duration, city, country){
         this.coords = coords;
         this.distance = distance;
         this.duration = duration;
+        this.city = city;
+        this.country = country;
         
     }
     
@@ -32,8 +34,8 @@ class Workout {
 
 class Running extends Workout {
     type = "running";
-    constructor(coords, distance, duration, cadence){
-        super(coords, distance, duration)
+    constructor(coords, distance, duration, city, country, cadence){
+        super(coords, distance, duration, city, country)
         this.cadence = cadence;
         this.calcPace();
         this._setDescription();
@@ -48,8 +50,8 @@ class Running extends Workout {
 
 class Cycling extends Workout {
     type= "cycling";
-    constructor(coords, distance, duration, elevationGain){
-        super(coords, distance, duration)
+    constructor(coords, distance, duration, city, country, elevationGain){
+        super(coords, distance, duration, city, country)
         this.elevationGain = elevationGain;
         this.calcSpeed();
         this._setDescription();
@@ -161,6 +163,8 @@ class App {
         const type = inputType.value;
         const distance = +inputDistance.value;
         const duration = +inputDuration.value;
+        const city = 'Setif';
+        const country = 'Algeria';
         const {lat, lng} = this.#mapEvent.latlng;
         let workout;
 
@@ -172,13 +176,13 @@ class App {
                 
             }
                
-            workout = new Running([lat, lng], distance, duration, cadence);
+            workout = new Running([lat, lng], distance, duration, city, country, cadence);
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
             if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration))
             return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
-            workout = new Cycling([lat, lng], distance, duration, elevation);
+            workout = new Cycling([lat, lng], distance, duration, city, country, elevation);
         }
         //new workout
         this.#workouts.push(workout);
@@ -232,7 +236,7 @@ class App {
         let html = `
             <li class="workout workout--${workout.type}" data-id="${workout.id}">
                 <button class="btn--close">&times;</button>
-                <h2 class="workout__title">${workout.description}</h2>
+                <h2 class="workout__title">${workout.description} in ${workout.city}, ${workout.country}</h2>
                 <div class="workout__details">
                     <span class="workout__icon">${workout.type === 'running' ? '🏃‍♂️': '🚴‍♀️'}</span>
                     <span class="workout__value">${workout.distance}</span>
@@ -333,3 +337,4 @@ const app = new App();
 
 
 
+//https://geocode.xyz/${lat},${long}?geoit=json&auth=646165016186869981748x44081
