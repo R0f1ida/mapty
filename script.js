@@ -211,9 +211,11 @@ class App {
         this.#workouts = [];
         location.reload();
     }
-    _renderWorkoutMarker(workout, vis=true){
-        L.marker(workout.coords).addTo(this.#map).setOpacity(vis ?  1 : 0)
-        .bindPopup(
+    _renderWorkoutMarker(workout){
+        let layer = workout.type === 'running'? 
+        L.circle(workout.coords,{color: 'green', radius: 500}).addTo(this.#map)
+        : L.marker(workout.coords).addTo(this.#map);
+        layer.bindPopup(
             L.popup({
                 maxWidth: "250",
                 minWidth:"100",
