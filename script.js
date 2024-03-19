@@ -105,6 +105,15 @@ class App {
         }
     }
 
+    _getLocation(lat, long) {
+        fetch(`https://geocode.xyz/${lat},${long}?geoit=json&auth=646165016186869981748x44081`)
+        .then(res => {
+            return res.json();
+        }).then(data => {
+            return data;
+        })
+    }
+
     _loadMap(position) {
         const { latitude } = position.coords;
         const { longitude } = position.coords;
@@ -192,7 +201,8 @@ class App {
         this._setLocalStorage();
         this._removeWorkout();
         this._hideDeleteButton();
-        
+        console.log(this._getLocation(workout.coords[0], workout.coords[1]))
+        console.log(workout)
     }
 
     _setLocalStorage(){
@@ -231,6 +241,7 @@ class App {
         .setPopupContent(`${workout.type === "running"? '🏃‍♂️': '🚴‍♀️'} ${workout.description}`)
         .openPopup(); 
     }
+    _
 
     _renderWorkout(workout) {
         let html = `
@@ -308,7 +319,7 @@ class App {
         sortedWorkouts.forEach(workout => this._renderWorkout(workout));
 
         console.log(this.#workouts)
-         console.log(sortedWorkouts);
+        console.log(sortedWorkouts);
     }
 
     _moveToPopup(e){
