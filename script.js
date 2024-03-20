@@ -105,12 +105,15 @@ class App {
         }
     }
 
-    _getLocation(lat, long) {
-        fetch(`https://geocode.xyz/${lat},${long}?geoit=json&auth=646165016186869981748x44081`)
+    _getLocation(workout) {
+        fetch(`https://geocode.xyz/${workout.coords[0]},${workout.coords[1]}?geoit=json&auth=646165016186869981748x44081`)
         .then(res => {
             return res.json();
         }).then(data => {
-            return data;
+            workout.country = data.country ? data.country : '';
+            workout.city = data.region;
+            console.log(workout);
+            console.log(data);
         })
     }
 
@@ -172,8 +175,7 @@ class App {
         const type = inputType.value;
         const distance = +inputDistance.value;
         const duration = +inputDuration.value;
-        const city = 'Setif';
-        const country = 'Algeria';
+    
         const {lat, lng} = this.#mapEvent.latlng;
         let workout;
 
@@ -185,23 +187,25 @@ class App {
                 
             }
                
-            workout = new Running([lat, lng], distance, duration, city, country, cadence);
+            workout = new Running([lat, lng], distance, duration);
+            workout.cadence = cadence;
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
             if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration))
             return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
-            workout = new Cycling([lat, lng], distance, duration, city, country, elevation);
+            workout = new Cycling([lat, lng], distance, duration);
+            workout.elevationGain = elevation;
         }
         //new workout
         this.#workouts.push(workout);
+        this._getLocation(workout);
         this._renderWorkoutMarker(workout);
         this._renderWorkout(workout);
         this._hideForm();
         this._setLocalStorage();
         this._removeWorkout();
         this._hideDeleteButton();
-        console.log(this._getLocation(workout.coords[0], workout.coords[1]))
         console.log(workout)
     }
 
@@ -241,7 +245,7 @@ class App {
         .setPopupContent(`${workout.type === "running"? '🏃‍♂️': '🚴‍♀️'} ${workout.description}`)
         .openPopup(); 
     }
-    _
+    
 
     _renderWorkout(workout) {
         let html = `
