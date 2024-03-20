@@ -16,13 +16,10 @@ const message = document.querySelector('.message');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
-    constructor(coords, distance, duration, city, country){
+    constructor(coords, distance, duration){
         this.coords = coords;
         this.distance = distance;
         this.duration = duration;
-        this.city = city;
-        this.country = country;
-        
     }
     
     _setDescription(){
@@ -34,8 +31,8 @@ class Workout {
 
 class Running extends Workout {
     type = "running";
-    constructor(coords, distance, duration, city, country, cadence){
-        super(coords, distance, duration, city, country)
+    constructor(coords, distance, duration, cadence){
+        super(coords, distance, duration)
         this.cadence = cadence;
         this.calcPace();
         this._setDescription();
@@ -50,8 +47,8 @@ class Running extends Workout {
 
 class Cycling extends Workout {
     type= "cycling";
-    constructor(coords, distance, duration, city, country, elevationGain){
-        super(coords, distance, duration, city, country)
+    constructor(coords, distance, duration, elevationGain){
+        super(coords, distance, duration)
         this.elevationGain = elevationGain;
         this.calcSpeed();
         this._setDescription();
@@ -105,16 +102,11 @@ class App {
         }
     }
 
-    _getLocation(workout) {
-        fetch(`https://geocode.xyz/${workout.coords[0]},${workout.coords[1]}?geoit=json&auth=646165016186869981748x44081`)
-        .then(res => {
-            return res.json();
-        }).then(data => {
-            workout.country = data.country ? data.country : '';
-            workout.city = data.region;
-            console.log(workout);
-            console.log(data);
-        })
+    async _getLocation(lat, lng) {
+        const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=646165016186869981748x44081`)
+        const data = await res.json();
+        return data;
+        
     }
 
     _loadMap(position) {
@@ -187,19 +179,20 @@ class App {
                 
             }
                
-            workout = new Running([lat, lng], distance, duration);
-            workout.cadence = cadence;
+            workout = new Running([lat, lng], distance, duration, cadence);
+            console.log(this._getLocation(workout.coords[0], workout.coords[1]));
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
             if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration))
             return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
-            workout = new Cycling([lat, lng], distance, duration);
-            workout.elevationGain = elevation;
+            workout = new Cycling([lat, lng], distance, duration, elevation);
+            this._getLocation(workout);
+            
         }
         //new workout
         this.#workouts.push(workout);
-        this._getLocation(workout);
+        
         this._renderWorkoutMarker(workout);
         this._renderWorkout(workout);
         this._hideForm();
