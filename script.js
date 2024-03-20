@@ -16,10 +16,12 @@ const message = document.querySelector('.message');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
-    constructor(coords, distance, duration){
+    constructor(coords, distance, duration, city, country){
         this.coords = coords;
         this.distance = distance;
         this.duration = duration;
+        this.city = city;
+        this.country = country;
     }
     
     _setDescription(){
@@ -31,8 +33,8 @@ class Workout {
 
 class Running extends Workout {
     type = "running";
-    constructor(coords, distance, duration, cadence){
-        super(coords, distance, duration)
+    constructor(coords, distance, duration, city, country, cadence){
+        super(coords, distance, duration, city, country)
         this.cadence = cadence;
         this.calcPace();
         this._setDescription();
@@ -47,8 +49,8 @@ class Running extends Workout {
 
 class Cycling extends Workout {
     type= "cycling";
-    constructor(coords, distance, duration, elevationGain){
-        super(coords, distance, duration)
+    constructor(coords, distance, duration, city, country, elevationGain){
+        super(coords, distance, duration, city, country)
         this.elevationGain = elevationGain;
         this.calcSpeed();
         this._setDescription();
@@ -105,7 +107,8 @@ class App {
     async _getLocation(lat, lng) {
         const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=646165016186869981748x44081`)
         const data = await res.json();
-        return data;
+        console.log(data)
+        return [data.region, data.country ? data.country : ''];
         
     }
 
@@ -159,7 +162,7 @@ class App {
         inputCadence.closest(".form__row").classList.toggle("form__row--hidden");
     }
 
-    _newWorkout(e) { 
+    async _newWorkout(e) { 
         e.preventDefault() 
         const validInputs = (...inputs) => inputs.every(inp => Number.isFinite(inp));
         const allPositive = (...inputs) => inputs.every(inp => inp > 0)
@@ -169,6 +172,8 @@ class App {
         const duration = +inputDuration.value;
     
         const {lat, lng} = this.#mapEvent.latlng;
+        const city = await this._getLocation(lat, lng);
+        console.log(city[0]);
         let workout;
 
         // running or cycling
@@ -179,8 +184,7 @@ class App {
                 
             }
                
-            workout = new Running([lat, lng], distance, duration, cadence);
-            console.log(this._getLocation(workout.coords[0], workout.coords[1]));
+            workout = new Running([lat, lng], distance, duration, city, cadence);
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
@@ -192,7 +196,6 @@ class App {
         }
         //new workout
         this.#workouts.push(workout);
-        
         this._renderWorkoutMarker(workout);
         this._renderWorkout(workout);
         this._hideForm();
