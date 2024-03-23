@@ -16,12 +16,11 @@ const message = document.querySelector('.message');
 class Workout {
     date = new Date();
     id = (Date.now() + '').slice(-10);
-    constructor(coords, distance, duration, city, country){
+    constructor(coords, distance, duration, city){
         this.coords = coords;
         this.distance = distance;
         this.duration = duration;
         this.city = city;
-        this.country = country;
     }
     
     _setDescription(){
@@ -33,8 +32,8 @@ class Workout {
 
 class Running extends Workout {
     type = "running";
-    constructor(coords, distance, duration, city, country, cadence){
-        super(coords, distance, duration, city, country)
+    constructor(coords, distance, duration, city, cadence){
+        super(coords, distance, duration, city)
         this.cadence = cadence;
         this.calcPace();
         this._setDescription();
@@ -49,8 +48,8 @@ class Running extends Workout {
 
 class Cycling extends Workout {
     type= "cycling";
-    constructor(coords, distance, duration, city, country, elevationGain){
-        super(coords, distance, duration, city, country)
+    constructor(coords, distance, duration, city, elevationGain){
+        super(coords, distance, duration, city)
         this.elevationGain = elevationGain;
         this.calcSpeed();
         this._setDescription();
@@ -108,7 +107,7 @@ class App {
         const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json&auth=646165016186869981748x44081`)
         const data = await res.json();
         console.log(data)
-        return [data.region, data.country ? data.country : ''];
+        return `${data.region}, ${data.country ? data.country : ''}`;
         
     }
 
@@ -173,7 +172,6 @@ class App {
     
         const {lat, lng} = this.#mapEvent.latlng;
         const city = await this._getLocation(lat, lng);
-        console.log(city[0]);
         let workout;
 
         // running or cycling
@@ -188,10 +186,15 @@ class App {
         }
         if(type === "cycling"){
             const elevation = +inputElevation.value;
-            if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration))
-            return form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
-            workout = new Cycling([lat, lng], distance, duration, elevation);
-            this._getLocation(workout);
+            if (!validInputs(distance, duration, elevation) || !allPositive(distance, duration)){
+                setTimeout(function(){
+                    form.insertAdjacentHTML('afterend', '<span class="error-number">inputs must be positive numbers</span>');
+                }, 3000);
+                alert('Please enter a positive number for Distance and Duration, as well as Elevation');
+                return false;
+            }
+            else '';
+            workout = new Cycling([lat, lng], distance, duration, city, elevation);
             
         }
         //new workout
@@ -247,7 +250,7 @@ class App {
         let html = `
             <li class="workout workout--${workout.type}" data-id="${workout.id}">
                 <button class="btn--close">&times;</button>
-                <h2 class="workout__title">${workout.description} in ${workout.city}, ${workout.country}</h2>
+                <h2 class="workout__title">${workout.description} in ${workout.city}</h2>
                 <div class="workout__details">
                     <span class="workout__icon">${workout.type === 'running' ? '🏃‍♂️': '🚴‍♀️'}</span>
                     <span class="workout__value">${workout.distance}</span>
@@ -316,7 +319,10 @@ class App {
     _sortWorkouts(){
         const sortedWorkouts = this.#workouts.slice().sort((a,b) => a.distance - b.distance);
         containerWorkouts.querySelectorAll('.workout').forEach(workoutE => workoutE.remove())
-        sortedWorkouts.forEach(workout => this._renderWorkout(workout));
+        sortedWorkouts.forEach(workout => {
+            this._renderWorkout(workout);
+            this._removeWorkout();
+        });
 
         console.log(this.#workouts)
         console.log(sortedWorkouts);
